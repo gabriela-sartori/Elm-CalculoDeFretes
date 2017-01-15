@@ -9508,9 +9508,9 @@ var _user$project$Model$Model = function (a) {
 		};
 	};
 };
-var _user$project$Model$RetornoPac = F2(
-	function (a, b) {
-		return {valor: a, prazoEntrega: b};
+var _user$project$Model$RetornoPac = F3(
+	function (a, b, c) {
+		return {valor: a, prazoEntrega: b, obs: c};
 	});
 
 var _user$project$Request$build_url = F2(
@@ -9631,25 +9631,82 @@ var _user$project$Request$sendRequest = F2(
 						A2(_user$project$Request$build_url, tipo, model)))));
 	});
 var _user$project$Request$decodePAC = function () {
-	var success = A3(
-		_elm_lang$core$Json_Decode$map2,
-		_user$project$Model$RetornoPac,
-		A2(
-			_elm_lang$core$Json_Decode$at,
-			{
-				ctor: '::',
-				_0: 'Servicos',
-				_1: {
+	var success = A2(
+		_elm_lang$core$Json_Decode$map,
+		function (retornoPac) {
+			return _elm_lang$core$Native_Utils.eq(retornoPac.valor, '0,00') ? _elm_lang$core$Result$Err(
+				A2(_elm_lang$core$Maybe$withDefault, '?', retornoPac.obs)) : _elm_lang$core$Result$Ok(retornoPac);
+		},
+		A4(
+			_elm_lang$core$Json_Decode$map3,
+			_user$project$Model$RetornoPac,
+			A2(
+				_elm_lang$core$Json_Decode$at,
+				{
 					ctor: '::',
-					_0: 'cServico',
+					_0: 'Servicos',
 					_1: {
 						ctor: '::',
-						_0: 'Valor',
+						_0: 'cServico',
+						_1: {
+							ctor: '::',
+							_0: 'Valor',
+							_1: {ctor: '[]'}
+						}
+					}
+				},
+				_elm_lang$core$Json_Decode$string),
+			A2(
+				_elm_lang$core$Json_Decode$at,
+				{
+					ctor: '::',
+					_0: 'Servicos',
+					_1: {
+						ctor: '::',
+						_0: 'cServico',
+						_1: {
+							ctor: '::',
+							_0: 'PrazoEntrega',
+							_1: {ctor: '[]'}
+						}
+					}
+				},
+				_elm_lang$core$Json_Decode$string),
+			_elm_lang$core$Json_Decode$oneOf(
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$core$Json_Decode$map,
+						_elm_lang$core$Maybe$Just,
+						A2(
+							_elm_lang$core$Json_Decode$at,
+							{
+								ctor: '::',
+								_0: 'Servicos',
+								_1: {
+									ctor: '::',
+									_0: 'cServico',
+									_1: {
+										ctor: '::',
+										_0: 'MsgErro',
+										_1: {
+											ctor: '::',
+											_0: '__cdata',
+											_1: {ctor: '[]'}
+										}
+									}
+								}
+							},
+							_elm_lang$core$Json_Decode$string)),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$core$Json_Decode$succeed(_elm_lang$core$Maybe$Nothing),
 						_1: {ctor: '[]'}
 					}
-				}
-			},
-			_elm_lang$core$Json_Decode$string),
+				})));
+	var error = A2(
+		_elm_lang$core$Json_Decode$map,
+		_elm_lang$core$Result$Err,
 		A2(
 			_elm_lang$core$Json_Decode$at,
 			{
@@ -9660,39 +9717,23 @@ var _user$project$Request$decodePAC = function () {
 					_0: 'cServico',
 					_1: {
 						ctor: '::',
-						_0: 'PrazoEntrega',
-						_1: {ctor: '[]'}
+						_0: 'MsgErro',
+						_1: {
+							ctor: '::',
+							_0: '__cdata',
+							_1: {ctor: '[]'}
+						}
 					}
 				}
 			},
 			_elm_lang$core$Json_Decode$string));
-	var error = A2(
-		_elm_lang$core$Json_Decode$at,
-		{
-			ctor: '::',
-			_0: 'Servicos',
-			_1: {
-				ctor: '::',
-				_0: 'cServico',
-				_1: {
-					ctor: '::',
-					_0: 'MsgErro',
-					_1: {
-						ctor: '::',
-						_0: '__cdata',
-						_1: {ctor: '[]'}
-					}
-				}
-			}
-		},
-		_elm_lang$core$Json_Decode$string);
 	return _elm_lang$core$Json_Decode$oneOf(
 		{
 			ctor: '::',
-			_0: A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Result$Err, error),
+			_0: success,
 			_1: {
 				ctor: '::',
-				_0: A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Result$Ok, success),
+				_0: error,
 				_1: {ctor: '[]'}
 			}
 		});
@@ -9816,6 +9857,7 @@ var _user$project$Update$update = F2(
 						}
 					});
 			case 'ReceivedRequest':
+				var _p10 = _p0._0._0;
 				var _p7 = _p0._0._1;
 				if (_p7.ctor === 'Ok') {
 					return A2(
@@ -9827,25 +9869,45 @@ var _user$project$Update$update = F2(
 								{
 									ctor: '_Tuple2',
 									_0: _p7._0,
-									_1: _user$project$Msg$tipoEnvioToInt(_p0._0._0)
+									_1: _user$project$Msg$tipoEnvioToInt(_p10)
 								}),
 							_1: {ctor: '[]'}
 						});
 				} else {
-					var _p8 = _p7._0;
-					return A2(
-						_elm_lang$core$Platform_Cmd_ops['!'],
-						_elm_lang$core$Native_Utils.update(
-							model,
-							{
-								resultPac: _elm_lang$core$Maybe$Just(
-									_elm_lang$core$Result$Err(_p8)),
-								resultSedex: _elm_lang$core$Maybe$Just(
-									_elm_lang$core$Result$Err(_p8)),
-								resultESedex: _elm_lang$core$Maybe$Just(
-									_elm_lang$core$Result$Err(_p8))
-							}),
-						{ctor: '[]'});
+					var _p9 = _p7._0;
+					var _p8 = _p10;
+					switch (_p8.ctor) {
+						case 'Pac':
+							return A2(
+								_elm_lang$core$Platform_Cmd_ops['!'],
+								_elm_lang$core$Native_Utils.update(
+									model,
+									{
+										resultPac: _elm_lang$core$Maybe$Just(
+											_elm_lang$core$Result$Err(_p9))
+									}),
+								{ctor: '[]'});
+						case 'Sedex':
+							return A2(
+								_elm_lang$core$Platform_Cmd_ops['!'],
+								_elm_lang$core$Native_Utils.update(
+									model,
+									{
+										resultSedex: _elm_lang$core$Maybe$Just(
+											_elm_lang$core$Result$Err(_p9))
+									}),
+								{ctor: '[]'});
+						default:
+							return A2(
+								_elm_lang$core$Platform_Cmd_ops['!'],
+								_elm_lang$core$Native_Utils.update(
+									model,
+									{
+										resultESedex: _elm_lang$core$Maybe$Just(
+											_elm_lang$core$Result$Err(_p9))
+									}),
+								{ctor: '[]'});
+					}
 				}
 			case 'UpdateCepOrigem':
 				return A2(
@@ -10063,32 +10125,46 @@ var _user$project$View$build_fieldset = F2(
 								}
 							};
 						} else {
-							var _p2 = _p1._0;
-							return {
-								ctor: '::',
-								_0: _elm_lang$html$Html$text(
-									A2(_elm_lang$core$Basics_ops['++'], 'Valor: ', _p2.valor)),
-								_1: {
+							var _p3 = _p1._0;
+							return A2(
+								_elm_lang$core$Basics_ops['++'],
+								{
 									ctor: '::',
-									_0: A2(
-										_elm_lang$html$Html$br,
-										{ctor: '[]'},
-										{ctor: '[]'}),
+									_0: _elm_lang$html$Html$text(
+										A2(_elm_lang$core$Basics_ops['++'], 'Valor: ', _p3.valor)),
 									_1: {
 										ctor: '::',
-										_0: _elm_lang$html$Html$text(
-											A2(_elm_lang$core$Basics_ops['++'], 'Prazo Entrega: ', _p2.prazoEntrega)),
+										_0: A2(
+											_elm_lang$html$Html$br,
+											{ctor: '[]'},
+											{ctor: '[]'}),
 										_1: {
 											ctor: '::',
-											_0: A2(
-												_elm_lang$html$Html$br,
-												{ctor: '[]'},
-												{ctor: '[]'}),
-											_1: {ctor: '[]'}
+											_0: _elm_lang$html$Html$text(
+												A2(_elm_lang$core$Basics_ops['++'], 'Prazo Entrega: ', _p3.prazoEntrega)),
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_elm_lang$html$Html$br,
+													{ctor: '[]'},
+													{ctor: '[]'}),
+												_1: {ctor: '[]'}
+											}
 										}
 									}
-								}
-							};
+								},
+								function () {
+									var _p2 = _p3.obs;
+									if (_p2.ctor === 'Just') {
+										return {
+											ctor: '::',
+											_0: _elm_lang$html$Html$text(_p2._0),
+											_1: {ctor: '[]'}
+										};
+									} else {
+										return {ctor: '[]'};
+									}
+								}());
 						}
 					}();
 					return {
