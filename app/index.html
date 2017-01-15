@@ -1,0 +1,32 @@
+<html>
+<head>
+    <title>Cálculo de Fretes</title>
+    <link rel="stylesheet" href="app.css">
+    <meta charset="UTF-8">
+</head>
+<body>
+    
+    <div id="main"></div>
+
+    <script type="text/javascript" src="xml_to_json.js"></script>
+    <!-- <script type="text/javascript" src="production.js"></script> -->
+    <script type="text/javascript" src="../_compile/Main.elm"></script>
+    
+    <script>
+        
+        var node = document.getElementById('main');
+        var app  = Elm.Main.embed(node);
+        
+        app.ports.send_xml_to_js.subscribe(function (info) {
+
+            var xml  = info[0]
+              , tipo = info[1]
+
+            var json = xml_to_json (xml);
+
+            app.ports.receive_json_from_js.send([json, tipo])
+        })
+
+    </script>
+
+</body>

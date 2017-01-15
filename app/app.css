@@ -1,0 +1,23 @@
+#fieldset {
+    background-color: #F4F4F4;
+}
+
+#form {
+    clear: both;
+    margin: 0 auto;
+}
+
+#form input[type=text] {
+    width: 100%;
+    clear: both;
+}
+
+#form .column {
+    margin-left: 25px;
+    float: left;
+}
+
+#results {
+    clear: both;
+    padding: 15px 25px;
+}
